@@ -42,16 +42,15 @@ def main():
         reasons
     )
 
-    crude_mortality_rates = ((data[year][reason] / data[year]['Nüfus']) * (10**6)).astype('int')
+    crude_mortality_rates = ((data[year][reason] / data[year]['Nüfus']) * (10**5)).astype('int')
     crude_mortality_rates.name = 'Kaba Ölüm Hızı (100 binde)'
     
     rates_df = pd.concat([data[year]['Şehir'], crude_mortality_rates], axis=1)
-    # rates_df.drop(0, inplace=True) # Remove Türkiye
 
     reason_text =  f'{reason} Nedeniyle' if reason != 'Toplam' else ''
     map_title = f'{year} - İllere Göre {reason_text} Ölüm Hızları'
 
-    fig = go.Figure(data=go.Choropleth(locations=data[year]['Şehir'],
+    fig = go.Figure(go.Choropleth(locations=data[year]['Şehir'],
                                     z = rates_df['Kaba Ölüm Hızı (100 binde)'], # Data to be color-coded
                                     geojson=geo_json,
                                     featureidkey="properties.name",
@@ -75,7 +74,7 @@ def main():
     x = df['Şehir']
     y = df['Kaba Ölüm Hızı (100 binde)']
 
-    bar_fig = go.Figure([go.Bar(x=x, y=y, text=y, textposition='auto')])
+    bar_fig = go.Figure(go.Bar(x=x, y=y, text=y))
     bar_fig.update_layout(
                         title=f'{reason_text} Ölüm Hızı En Yüksek 5 Şehir <i>({year})</i>', 
                         xaxis_title='Şehirler', yaxis_title='Ölüm Hızı <i>(100 binde)</i>', 
@@ -88,10 +87,10 @@ def main():
     # Pie Chart
     city = df.iloc[0,0]
     population = data[year][data[year]['Şehir'] == city].iloc[0,-1]
-    df = data[year][data[year]['Şehir'] == city].iloc[:,2:-1]
-    rates = ((df / population) * (10**6)).astype('int')
+    diseases = data[year][data[year]['Şehir'] == city].iloc[:,2:-1]
+    rates = ((diseases / population) * (10**5)).astype('int')
 
-    pie_fig = go.Figure(data=[go.Pie(labels=list(rates.columns), values=list(rates.values[0]))])
+    pie_fig = go.Figure(go.Pie(labels=list(rates.columns), values=list(rates.values[0])))
     pie_fig.update_layout(
                         title=f'{city} Şehrindeki Tüm Ölüm Hızları <i>({year})</i>', 
                         modebar_remove=['select', 'lasso', 'pan', 'zoom', 'zoomIn', 'zoomOut', 'autoscale'],
