@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from streamlit_disqus import st_disqus
 
 from data import get_data, get_geojson
 
@@ -98,8 +97,6 @@ def main():
     )
     st.plotly_chart(pie_fig, use_container_width=True)
 
-    st.write('*Dilerseniz yorum bırakabilirsiniz.*')
-    st_disqus('turkiyede-olum-nedenleri')
     st.write('----')
     st.write('''
             ##### Veri Kaynağı
